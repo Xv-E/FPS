@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
+
 public class PlayerManager : MonoBehaviour
 {
     static public GameObject localPlayer;
@@ -10,35 +11,28 @@ public class PlayerManager : MonoBehaviour
     public GameObject model; // 模型
     public GameObject step_rotation;
     public GameObject aim;
-    public GameObject weapon;
-    public WeaponManager weaponManager;
-    public GameObject bulletPrefab;
-
-    public float moveSpeed = 200f;
-    public float jumpHeight = 5f;
-    public int airTimes = 0;
 
     [SerializeField] private Animator anim;
     private PlayerInput pi;
+    private CharacterAttr ca;
     private Rigidbody rigi;
     private GroundSenser gs;
     private CapsuleCollider capcol;
-    private WeaponAttr current_WeaponAttr;
+
+    private Vector3 speedAir=Vector3.zero; 
+    // 计数
+    public int airTimes = 0;
 
     void Awake()
     {
         if (GetComponent<PhotonView>().IsMine)
             localPlayer = this.gameObject;
         pi = GetComponent<PlayerInput>();
+        ca = GetComponent<CharacterAttr>();
         rigi = GetComponent<Rigidbody>();
         anim = model.GetComponent<Animator>();
         capcol = GetComponent<CapsuleCollider>();
         gs = GetComponent<GroundSenser>();
-
-        // 武器
-        weaponManager = GetComponent<WeaponManager>();
-        weaponManager.ChangeWeapon(0);
-        current_WeaponAttr = weaponManager.currentWeapon.GetComponent<WeaponAttr>();
     }
     void Start()
     {
@@ -51,38 +45,37 @@ public class PlayerManager : MonoBehaviour
         float v_x = pi.velocity.x;
         float v_y = pi.velocity.y;
 
-
         Vector3 directAim = aim.transform.position - transform.position;
         directAim.Normalize();
         directAim.y = 0;
-
         Vector3 direcMove = new Vector3(v_x, 0, v_y);
-        //direcMove.Normalize();
-        direcMove.y = 0;
-
-        // 移动
-        rigi.velocity = new Vector3(0, rigi.velocity.y, 0);
-        rigi.velocity += (Quaternion.AngleAxis(90, Vector3.up) * directAim * v_x + directAim * v_y) * Time.fixedDeltaTime * moveSpeed;
-        // 设置移动动画
-        anim.SetFloat("velocity", Mathf.Sqrt(v_x * v_x + v_y * v_y));
-        anim.SetFloat("animSpeed", v_y >= -0.1 ? 1 : -1);
-
+ 
         // 离地
         if (!gs.isGrounded){
             anim.SetBool("isGrounded", false);
             pi.moveInputEnable = false;
+            rigi.velocity = new Vector3(0, rigi.velocity.y, 0);
+            rigi.velocity += speedAir;
         }
         // 在地面
         else{
+            // 移动
+            rigi.velocity = new Vector3(0, rigi.velocity.y, 0);
+            rigi.velocity += (Quaternion.AngleAxis(90, Vector3.up) * directAim * v_x + directAim * v_y) * Time.fixedDeltaTime * ca.moveSpeed;
+            // 设置移动动画
+            anim.SetFloat("velocity", Mathf.Sqrt(v_x * v_x + v_y * v_y));
+            anim.SetFloat("animSpeed", v_y >= -0.1 ? 1 : -1);
             anim.SetBool("isGrounded", true);
             pi.moveInputEnable = true;
             // 关于跳跃
             if (pi.jump)
             {
-                rigi.velocity += new Vector3(0, jumpHeight, 0);
+                speedAir = rigi.velocity;
+                speedAir.y = 0;
+                rigi.velocity += new Vector3(0, ca.jumpHeight, 0);
                 anim.SetTrigger("jump");
                 anim.SetBool("isGrounded", false);
-                pi.moveInputEnable = true;
+                pi.moveInputEnable = false;
                 pi.jump = false;
             }
         }
@@ -97,12 +90,7 @@ public class PlayerManager : MonoBehaviour
             step_rotation.transform.rotation = Quaternion.Lerp(step_rotation.transform.rotation, Quaternion.LookRotation(directAim), 0.3f);
         }
 
-        //射击
-        if (pi.fire)
-        {
-            GameObject bullet = Instantiate(bulletPrefab, aim.transform.position, aim.transform.rotation);
-            bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * current_WeaponAttr.bulletSpeed;
-        }
+
     }
 
 }

@@ -239,13 +239,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   frontHandler: {fileID: 3321802038208741527}
   backHandler: {fileID: 3321802039269168572}
-  attack: 10
-  shootSpeed: 20
-  bulletSpeed: 20
+  damage: 10
+  bulletSpeed: 10
+  shootSpeed: 10
   bulletNum: 30
   currentBulletNum: 30
   backup: 60
-  road_time: 3
+  reload_time: 100
 --- !u!114 &203475380672946629
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,10 +261,10 @@ MonoBehaviour:
   ObservedComponentsFoldoutOpen: 1
   Group: 0
   prefixField: -1
-  Synchronization: 0
+  Synchronization: 3
   OwnershipTransfer: 0
   ObservedComponents:
-  - {fileID: 0}
+  - {fileID: 3321802039070251336}
   viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

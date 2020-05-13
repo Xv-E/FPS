@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+
+// 玩家输入模块
 public class PlayerInput : MonoBehaviour, IPunObservable
 {
     //intput key
@@ -11,10 +13,21 @@ public class PlayerInput : MonoBehaviour, IPunObservable
     public string keyRight;
     public string keyJump;
 
+    public float mouseX;
+    public float mouseY;
+
     public bool moveInputEnable=true;
     public Vector2 velocity;  // 移动速度
     public bool jump = false; // 跳跃
     public bool fire = false; // 开火
+
+    //切换镜头
+    public bool changeCamera = false;
+    // 切换武器
+    public bool changeLeft = false;
+    public bool changeRight = false;
+    // 换弹
+    public bool reload = false;
 
     private float Dup;
     private float Dright;
@@ -31,7 +44,7 @@ public class PlayerInput : MonoBehaviour, IPunObservable
         Screen.fullScreen = false;  //退出全屏           
         Screen.SetResolution(800, 600, false);
         if (GetComponent<PhotonView>().IsMine) localPlayer = this.gameObject;
-        DontDestroyOnLoad(this.gameObject);
+        //DontDestroyOnLoad(this.gameObject);
     }
     void Start()
     {
@@ -39,7 +52,7 @@ public class PlayerInput : MonoBehaviour, IPunObservable
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
         // 不是本地用户角色
         if (this.gameObject != PlayerManager.localPlayer) return;
@@ -49,24 +62,31 @@ public class PlayerInput : MonoBehaviour, IPunObservable
             fire = true;
         if (Input.GetButtonUp("Fire1"))
             fire = false;
+        mouseX = Input.GetAxis("Mouse X");
+        mouseY = Input.GetAxis("Mouse Y");
+        // 切换第一(三)人称
+        changeCamera = Input.GetKeyDown("t");
+        // 切换武器
+        changeLeft = Input.GetKeyDown("q");
+        changeRight = Input.GetKeyDown("e");
+        //换弹
+        reload = Input.GetKeyDown("r");
 
-        // 移动指令禁止
-        if (!moveInputEnable) return;
+        // 移动跳跃指令
+        if (moveInputEnable) { 
+            targetDup = (Input.GetKey(keyUp) ? 1.0f : 0) - (Input.GetKey(keyDown) ? 1.0f : 0);
+            targetDright = (Input.GetKey(keyRight) ? 1.0f : 0) - (Input.GetKey(keyLeft) ? 1.0f : 0);
 
-        targetDup = (Input.GetKey(keyUp) ? 1.0f : 0) - (Input.GetKey(keyDown) ? 1.0f : 0);
-        targetDright = (Input.GetKey(keyRight) ? 1.0f : 0) - (Input.GetKey(keyLeft) ? 1.0f : 0);
+            Dup = Mathf.SmoothDamp(Dup, targetDup, ref velocityDup, 0.2f);
+            Dright = Mathf.SmoothDamp(Dright, targetDright, ref velocityDright, 0.2f);
 
-        Dup = Mathf.SmoothDamp(Dup, targetDup, ref velocityDup, 0.2f);
-        Dright = Mathf.SmoothDamp(Dright, targetDright, ref velocityDright, 0.2f);
+            velocity = squareToCircle(new Vector2(Dright, Dup));
 
-        velocity = squareToCircle(new Vector2(Dright, Dup));
-
-        //if (jump)
-        //   jump = false;
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            jump = true;
+            //jump = false;
+            if (Input.GetKeyDown(KeyCode.Space)) {
+                jump = true;
+            }
         }
-
 
 
     }
@@ -86,13 +106,17 @@ public class PlayerInput : MonoBehaviour, IPunObservable
 
         if (stream.IsWriting)
         {
-            stream.SendNext(velocity);
-            stream.SendNext(jump);
+            //stream.SendNext(fire);
+            stream.SendNext(changeLeft);
+            stream.SendNext(changeRight);
+            stream.SendNext(reload);
         }
         else
         {
-            velocity = (Vector2)stream.ReceiveNext();
-            jump = (bool)stream.ReceiveNext();
+            //fire = (bool)stream.ReceiveNext();
+            changeLeft = (bool)stream.ReceiveNext();
+            changeRight = (bool)stream.ReceiveNext();
+            reload = (bool)stream.ReceiveNext();
         }
     }
 }

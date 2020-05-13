@@ -1332,14 +1332,8 @@ MonoBehaviour:
   model: {fileID: 1651984747}
   step_rotation: {fileID: 1921115957}
   aim: {fileID: 1842866935}
-  weapon: {fileID: 718615881}
-  weaponPrefab: {fileID: 0}
-  bulletPrefab: {fileID: 8997486293078695221, guid: 15523060a150bd04abb76984e77c8686,
-    type: 3}
-  moveSpeed: 200
-  jumpHeight: 5
-  airTimes: 0
   anim: {fileID: 0}
+  airTimes: 0
 --- !u!114 &626371308
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1379,7 +1373,8 @@ MonoBehaviour:
   cameraSpeed: 100
   v_rotate: {fileID: 1523035496}
   h_rotate: {fileID: 1902024296}
-  camera: {fileID: 733069805}
+  firstCamera: {fileID: 0}
+  thirdCamera: {fileID: 0}
 --- !u!114 &626371310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1398,10 +1393,16 @@ MonoBehaviour:
   keyLeft: a
   keyRight: d
   keyJump: ' '
+  mouseX: 0
+  mouseY: 0
   moveInputEnable: 1
   velocity: {x: 0, y: 0}
   jump: 0
   fire: 0
+  changeCamera: 0
+  changeLeft: 0
+  changeRight: 0
+  reload: 0
 --- !u!4 &626371311
 Transform:
   m_ObjectHideFlags: 0
@@ -1922,13 +1923,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   frontHandler: {fileID: 0}
   backHandler: {fileID: 0}
-  attack: 10
-  shootSpeed: 10
+  damage: 0
   bulletSpeed: 10
+  shootSpeed: 0
   bulletNum: 30
   currentBulletNum: 30
   backup: 60
-  road_time: 3
+  reload_time: 0
+--- !u!4 &996008371 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2663923177995955206, guid: 1b215cc1a54d0a34ead36db16d3e060e,
+    type: 3}
+  m_PrefabInstance: {fileID: 2663923177454020103}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1024144105
 GameObject:
   m_ObjectHideFlags: 0
@@ -5127,6 +5134,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 590994754400032894, guid: 1b215cc1a54d0a34ead36db16d3e060e,
+        type: 3}
+      propertyPath: viewIdField
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1560252447101530027, guid: 1b215cc1a54d0a34ead36db16d3e060e,
+        type: 3}
+      propertyPath: viewIdField
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 2663923177646503121, guid: 1b215cc1a54d0a34ead36db16d3e060e,
         type: 3}
       propertyPath: leftHand_IK
@@ -5216,6 +5233,21 @@ PrefabInstance:
         type: 3}
       propertyPath: viewIdField
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2663923179010790509, guid: 1b215cc1a54d0a34ead36db16d3e060e,
+        type: 3}
+      propertyPath: m_Data.m_Target
+      value: 
+      objectReference: {fileID: 996008371}
+    - target: {fileID: 2996813007754796756, guid: 1b215cc1a54d0a34ead36db16d3e060e,
+        type: 3}
+      propertyPath: viewIdField
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 5523236124656840072, guid: 1b215cc1a54d0a34ead36db16d3e060e,
+        type: 3}
+      propertyPath: viewIdField
+      value: 11
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1b215cc1a54d0a34ead36db16d3e060e, type: 3}
