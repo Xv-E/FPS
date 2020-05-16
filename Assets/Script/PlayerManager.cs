@@ -19,7 +19,6 @@ public class PlayerManager : MonoBehaviour
     private GroundSenser gs;
     private CapsuleCollider capcol;
 
-    private Vector3 speedAir=Vector3.zero; 
     // 计数
     public int airTimes = 0;
 
@@ -54,8 +53,6 @@ public class PlayerManager : MonoBehaviour
         if (!gs.isGrounded){
             anim.SetBool("isGrounded", false);
             pi.moveInputEnable = false;
-            rigi.velocity = new Vector3(0, rigi.velocity.y, 0);
-            rigi.velocity += speedAir;
         }
         // 在地面
         else{
@@ -70,9 +67,7 @@ public class PlayerManager : MonoBehaviour
             // 关于跳跃
             if (pi.jump)
             {
-                speedAir = rigi.velocity;
-                speedAir.y = 0;
-                rigi.velocity += new Vector3(0, ca.jumpHeight, 0);
+                rigi.velocity = new Vector3(rigi.velocity.x, ca.jumpHeight, rigi.velocity.z);
                 anim.SetTrigger("jump");
                 anim.SetBool("isGrounded", false);
                 pi.moveInputEnable = false;

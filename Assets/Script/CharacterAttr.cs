@@ -9,7 +9,7 @@ public class CharacterAttr : MonoBehaviour, IPunObservable
     public float health = 100f;
     public float moveSpeed = 200f;
     public float jumpHeight = 5f;
-
+    public int money = 500;
     void FixedUpdate()
     {
 
@@ -26,12 +26,15 @@ public class CharacterAttr : MonoBehaviour, IPunObservable
             stream.SendNext(health);
             stream.SendNext(moveSpeed);
             stream.SendNext(jumpHeight);
+            stream.SendNext(money);
         }
         else
         {
             health = (float)stream.ReceiveNext();
             moveSpeed = (float)stream.ReceiveNext();
             jumpHeight = (float)stream.ReceiveNext();
+            money = (int)stream.ReceiveNext();
+
         }
     }
 }

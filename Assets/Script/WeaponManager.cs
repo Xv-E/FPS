@@ -7,10 +7,10 @@ using Com.MyCompany.MyGame;
 
 public class WeaponManager : MonoBehaviour, IPunObservable
 {
-    //public TwoBoneIKConstraint leftHand_IK;
-    //public TwoBoneIKConstraint rightHand_IK;
-
-    static List<GameObject> allWeapon; // 所有武器预设体
+    public TwoBoneIKConstraint leftHand_IK;
+    public TwoBoneIKConstraint rightHand_IK;
+    
+    public static List<KeyValuePair<object, int>> allWeapon; // 所有武器预设体
 
     public List<GameObject> weaponList = new List<GameObject>(); // 已有武器
     public int weaponCode = 0; // 当前武器在list的编号
@@ -34,16 +34,18 @@ public class WeaponManager : MonoBehaviour, IPunObservable
         pi = GetComponent<PlayerInput>();
         // 全局静态资源只初始化一次
         if (allWeapon == null) {
-            allWeapon = new List<GameObject>();
-            allWeapon.Add((GameObject)Resources.Load("weapon/Ak-47"));
-            allWeapon.Add((GameObject)Resources.Load("weapon/M4A1 Sopmod"));
+            allWeapon = new List<KeyValuePair<object, int>>();
+            object[] twist = { };
+            allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/Ak-47"), 200));
+            allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/M4A1 Sopmod"), 200));
+            allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/Skorpion VZ"), 100));
+            allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/UMP-45"), 100));
         }
         // 为角色添加武器 应该由商店完成
-        addWeapon(0);
-        addWeapon(1);
+        addWeapon(3);
 
     }
-    void FixedUpdate()
+    void Update()
     {
         // 切换武器
         if (pi.changeLeft)
@@ -92,20 +94,30 @@ public class WeaponManager : MonoBehaviour, IPunObservable
         {
             reload();
         }
+
+        // 换持枪姿势
+        if (currentWeapon!=null){
+            leftHand_IK.data.target.position = currentWeapon.GetComponent<WeaponAttr>().frontHandler.transform.position;
+            leftHand_IK.data.target.rotation = currentWeapon.GetComponent<WeaponAttr>().frontHandler.transform.rotation;
+            rightHand_IK.data.target.position = currentWeapon.GetComponent<WeaponAttr>().backHandler.transform.position;
+            rightHand_IK.data.target.rotation = currentWeapon.GetComponent<WeaponAttr>().backHandler.transform.rotation;
+        }
     }
     // 增加武器
     public void addWeapon(int i) {
-        Quaternion w_rotation = transform.rotation * weapon.transform.rotation * allWeapon[i].transform.rotation;
-        var newWeapon = Instantiate(allWeapon[i], Vector3.zero, w_rotation);
+        GameObject w = (GameObject)allWeapon[i].Key;
+        Quaternion w_rotation = transform.rotation * weapon.transform.rotation * w.transform.rotation;
+        var newWeapon = Instantiate(w , Vector3.zero, w_rotation);
         newWeapon.transform.parent = weapon.transform;
-        newWeapon.transform.localPosition = allWeapon[i].transform.position;
+        newWeapon.transform.localPosition = w.transform.position;
         weaponList.Add(newWeapon);
         
         if (currentWeapon != null)
             newWeapon.gameObject.SetActive(false);
         else {
-            currentWeapon = newWeapon;
-            current_WeaponAttr = currentWeapon.GetComponent<WeaponAttr>();
+            //currentWeapon = newWeapon;
+            //current_WeaponAttr = currentWeapon.GetComponent<WeaponAttr>();
+            ChangeWeapon(0);
         }
 
     }
@@ -125,12 +137,6 @@ public class WeaponManager : MonoBehaviour, IPunObservable
         weaponList[i].gameObject.SetActive(true);
         currentWeapon = weaponList[i];
         current_WeaponAttr = currentWeapon.GetComponent<WeaponAttr>();
-        // 换持枪姿势
-        //leftHand_IK.data.target = currentWeapon.GetComponent<WeaponAttr>().frontHandler.transform;
-        //leftHand_IK.data.target.parent = currentWeapon.GetComponent<WeaponAttr>().frontHandler.transform;
-
-        //rightHand_IK.data.target = currentWeapon.GetComponent<WeaponAttr>().backHandler.transform;
-        //rightHand_IK.data.target.parent = currentWeapon.GetComponent<WeaponAttr>().backHandler.transform;
     }
 
     // 换弹
@@ -146,8 +152,8 @@ public class WeaponManager : MonoBehaviour, IPunObservable
         else
         {
             int temp = current_WeaponAttr.backup + current_WeaponAttr.currentBulletNum;
-            current_WeaponAttr.currentBulletNum = current_WeaponAttr.backup > current_WeaponAttr.bulletNum ? current_WeaponAttr.bulletNum : current_WeaponAttr.backup;
-            current_WeaponAttr.backup = temp-current_WeaponAttr.currentBulletNum;
+            current_WeaponAttr.currentBulletNum = temp > current_WeaponAttr.bulletNum ? current_WeaponAttr.bulletNum : temp;
+            current_WeaponAttr.backup = temp - current_WeaponAttr.currentBulletNum;
             reloading = false;
         }
     }

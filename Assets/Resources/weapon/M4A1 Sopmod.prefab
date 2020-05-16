@@ -239,13 +239,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   frontHandler: {fileID: 3321802038208741527}
   backHandler: {fileID: 3321802039269168572}
+  weaponName: M4A1
   damage: 10
   bulletSpeed: 10
   shootSpeed: 10
   bulletNum: 30
   currentBulletNum: 30
   backup: 60
-  reload_time: 100
+  reload_time: 70
+  price: 200
 --- !u!114 &203475380672946629
 MonoBehaviour:
   m_ObjectHideFlags: 0

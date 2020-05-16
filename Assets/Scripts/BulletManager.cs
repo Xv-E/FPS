@@ -52,6 +52,11 @@ public class BulletManager : MonoBehaviourPunCallbacks, IPunObservable,IPunInsta
             // 8是character层
             if (other.gameObject.layer == 8) {
                 other.GetComponent<CharacterAttr>().health -= damage;
+                if (other.GetComponent<CharacterAttr>().health < 0)
+                {
+                    Destroy(other.gameObject);
+                    from_player.GetComponent<CharacterAttr>().money += 200;
+                }
             }
             // 与子弹碰撞不消失
             if (other.gameObject.layer!=9)

@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2609592102116831800}
   m_LocalRotation: {x: -0.4171264, y: 0.012988456, z: 0.90845096, w: 0.02353138}
-  m_LocalPosition: {x: -0.164, y: -0.062, z: 0.197}
+  m_LocalPosition: {x: -0.164, y: 0.032, z: 0.207}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5445528040524262865}
@@ -111,6 +111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   frontHandler: {fileID: 2609592102116831800}
   backHandler: {fileID: 3199971992768537976}
+  weaponName: AK47
   damage: 15
   bulletSpeed: 8
   shootSpeed: 15
@@ -118,6 +119,7 @@ MonoBehaviour:
   currentBulletNum: 30
   backup: 60
   reload_time: 80
+  price: 200
 --- !u!114 &-7380509837940853038
 MonoBehaviour:
   m_ObjectHideFlags: 0

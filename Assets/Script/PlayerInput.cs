@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Photon.Pun;
 
 // 玩家输入模块
 public class PlayerInput : MonoBehaviour, IPunObservable
 {
+    public GameObject StoreCanvas;
     //intput key
     public string keyUp;
     public string keyDown;
@@ -41,29 +43,43 @@ public class PlayerInput : MonoBehaviour, IPunObservable
 
     void Awake()
     {
-        Screen.fullScreen = false;  //退出全屏           
-        Screen.SetResolution(800, 600, false);
+        Cursor.visible = false;     // 隐藏鼠标
+        Screen.fullScreen = false;  // 退出全屏           
+        Screen.SetResolution(1200, 800, false);
         if (GetComponent<PhotonView>().IsMine) localPlayer = this.gameObject;
         //DontDestroyOnLoad(this.gameObject);
     }
     void Start()
     {
-        
+        StoreCanvas.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(Input.GetKeyDown("o")){
+            Screen.fullScreen = !Screen.fullScreen;
+        }
+
         // 不是本地用户角色
         if (this.gameObject != PlayerManager.localPlayer) return;
 
-        // 鼠标事件
-        if (Input.GetButtonDown("Fire1"))
-            fire = true;
-        if (Input.GetButtonUp("Fire1"))
+        // 鼠标事件 当鼠标在ui界面时失效
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            if (Input.GetButtonDown("Fire1"))
+                fire = true;
+            if (Input.GetButtonUp("Fire1"))
+                fire = false;
+            mouseX = Input.GetAxis("Mouse X");
+            mouseY = Input.GetAxis("Mouse Y");
+        }
+        else
+        {
             fire = false;
-        mouseX = Input.GetAxis("Mouse X");
-        mouseY = Input.GetAxis("Mouse Y");
+            mouseX = 0;
+            mouseY = 0;
+        }
         // 切换第一(三)人称
         changeCamera = Input.GetKeyDown("t");
         // 切换武器
@@ -87,7 +103,12 @@ public class PlayerInput : MonoBehaviour, IPunObservable
                 jump = true;
             }
         }
-
+        //商店界面
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            StoreCanvas.SetActive(true);
+            Cursor.visible = true;
+        }
 
     }
 

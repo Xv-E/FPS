@@ -22,7 +22,7 @@ public class GroundSenser : MonoBehaviour
         point1 = transform.position + transform.up * radius + Vector3.down * senser_option;
         point2 = transform.position - transform.up * radius + transform.up * capcol.height;
 
-        Collider[] outputCols = Physics.OverlapCapsule(point1, point2, radius, LayerMask.GetMask("Character") + LayerMask.GetMask("Ground"));
+        Collider[] outputCols = Physics.OverlapCapsule(point1, point2, radius, LayerMask.GetMask("Character")|LayerMask.GetMask("Ground"));
         if (outputCols.Length > 1)
         {
             isGrounded = true;

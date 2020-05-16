@@ -8,6 +8,7 @@ public class WeaponAttr : MonoBehaviour, IPunObservable
     public GameObject frontHandler;
     public GameObject backHandler;
 
+    public string weaponName;      // 名字
     public float damage;      // 攻击力
     public float bulletSpeed; // 子弹速度
     public int shootSpeed;  // 射速
@@ -15,7 +16,7 @@ public class WeaponAttr : MonoBehaviour, IPunObservable
     public int currentBulletNum; // 当前装弹量
     public int backup;      // 后备弹夹
     public int reload_time;   // 装弹时间
-
+    //public static int price;       // 价格
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting)
