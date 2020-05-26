@@ -51,13 +51,12 @@ MonoBehaviour:
   backHandler: {fileID: 3449678751575948828}
   weaponName: SKorpion
   damage: 8
-  bulletSpeed: 10
+  bulletSpeed: 45
   shootSpeed: 10
   bulletNum: 20
   currentBulletNum: 20
   backup: 40
   reload_time: 50
-  price: 100
 --- !u!1 &503810065982174010
 GameObject:
   m_ObjectHideFlags: 0

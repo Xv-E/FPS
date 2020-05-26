@@ -111,13 +111,12 @@ MonoBehaviour:
   backHandler: {fileID: 4692450866989867976}
   weaponName: UMP-45
   damage: 7
-  bulletSpeed: 15
+  bulletSpeed: 45
   shootSpeed: 10
   bulletNum: 20
   currentBulletNum: 20
   backup: 40
   reload_time: 40
-  price: 100
 --- !u!1 &7893009714262578242
 GameObject:
   m_ObjectHideFlags: 0

@@ -20,7 +20,8 @@ public class WeaponManager : MonoBehaviour, IPunObservable
 
     public GameObject bulletPrefab; // 子弹预设体
     public GameObject aim;
-
+    public GameObject handGrenade;//手雷预制体
+    private GameObject metalParticle;
     private PlayerInput pi;
 
 
@@ -38,12 +39,21 @@ public class WeaponManager : MonoBehaviour, IPunObservable
             object[] twist = { };
             allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/Ak-47"), 200));
             allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/M4A1 Sopmod"), 200));
-            allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/Skorpion VZ"), 100));
+            allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/SCAR"), 180));
+            allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/AWP"), 300));
+            allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/SG550"), 200));
+            allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/B43"), 150));
             allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/UMP-45"), 100));
+            allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/P90"), 100));
+            allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/Skorpion VZ"), 100));
+            allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/shotgun1"), 100));
+            allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/Skorpion VZ"), 100));//以后替换成连发霰弹
+            allWeapon.Add(new KeyValuePair<object, int>(Resources.Load("weapon/RocketLauncher"), 300));
         }
         // 为角色添加武器 应该由商店完成
-        addWeapon(3);
-
+        addWeapon(0);
+        handGrenade = Resources.Load("Hand_Grenade_Prefab") as GameObject;
+        metalParticle = Resources.Load("Particle/Metal Impact Prefab") as GameObject;
     }
     void Update()
     {
@@ -72,10 +82,38 @@ public class WeaponManager : MonoBehaviour, IPunObservable
                 current_WeaponAttr.currentBulletNum--;
                 fireTimes = current_WeaponAttr.shootSpeed;
                 //GameObject bullet = Instantiate(bulletPrefab, aim.transform.position, aim.transform.rotation);
-                GameObject bullet = PhotonNetwork.Instantiate(bulletPrefab.name, aim.transform.position, aim.transform.rotation);
-                bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * current_WeaponAttr.bulletSpeed;
-                bullet.GetComponent<BulletManager>().damage = current_WeaponAttr.damage;
-                bullet.GetComponent<BulletManager>().from_player = this.gameObject;
+                GameObject bullet;
+                if (!current_WeaponAttr.weaponName.Equals("RocketLauncher"))
+                {
+                    switch (current_WeaponAttr.weaponName)
+                    {
+                        case "shotgun1":
+                            bullet = PhotonNetwork.Instantiate("ShotGunBullet", aim.transform.position, aim.transform.rotation);
+                            break;
+                        default:
+                            bullet = PhotonNetwork.Instantiate(bulletPrefab.name, aim.transform.position, aim.transform.rotation);
+                            break;
+                    }
+                    //GameObject bullet = PhotonNetwork.Instantiate(bulletPrefab.name, aim.transform.position, aim.transform.rotation);
+                    bullet.GetComponent<BulletManager>().from_player = this.gameObject;
+                    bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * current_WeaponAttr.bulletSpeed;
+                    bullet.GetComponent<BulletManager>().damage = current_WeaponAttr.damage;
+                    bullet.GetComponent<BulletManager>().from_player = this.gameObject;
+                    GameObject particle = Instantiate(metalParticle, aim.transform.position, aim.transform.rotation);
+                    particle.transform.Find("Metal Bullet Hole Particle").gameObject.SetActive(false);
+                    Destroy(particle, 1f);
+                }
+                if(current_WeaponAttr.weaponName.Equals("RocketLauncher"))
+                {
+                    bullet = PhotonNetwork.Instantiate("RocketLauncherBullet", aim.transform.position, aim.transform.rotation);
+                    bullet.GetComponent<BulletManager>().from_player = this.gameObject;
+                    bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * current_WeaponAttr.bulletSpeed;
+                    bullet.GetComponent<BulletManager>().damage = current_WeaponAttr.damage;
+                    bullet.GetComponent<BulletManager>().from_player = this.gameObject;
+                    //GameObject particle = Instantiate(metalParticle, aim.transform.position, aim.transform.rotation);
+                    //particle.transform.Find("Metal Bullet Hole Particle").gameObject.SetActive(false);
+                    //Destroy(particle, 1f);
+                }
             }
             else
             {
@@ -102,11 +140,21 @@ public class WeaponManager : MonoBehaviour, IPunObservable
             rightHand_IK.data.target.position = currentWeapon.GetComponent<WeaponAttr>().backHandler.transform.position;
             rightHand_IK.data.target.rotation = currentWeapon.GetComponent<WeaponAttr>().backHandler.transform.rotation;
         }
+        //扔手雷
+        if (pi.boom)
+        {
+            
+            GameObject handgrenade = PhotonNetwork.Instantiate(handGrenade.name, aim.transform.position, aim.transform.rotation);
+            handgrenade.GetComponent<Rigidbody>().velocity = handgrenade.transform.forward * 20f;
+            handgrenade.GetComponent<HandGrenade>().fromplayer = this.gameObject;
+            pi.boom = false;
+        }
+
     }
     // 增加武器
     public void addWeapon(int i) {
         GameObject w = (GameObject)allWeapon[i].Key;
-        Quaternion w_rotation = transform.rotation * weapon.transform.rotation * w.transform.rotation;
+        Quaternion w_rotation = weapon.transform.rotation * w.transform.rotation;
         var newWeapon = Instantiate(w , Vector3.zero, w_rotation);
         newWeapon.transform.parent = weapon.transform;
         newWeapon.transform.localPosition = w.transform.position;
@@ -142,7 +190,7 @@ public class WeaponManager : MonoBehaviour, IPunObservable
     // 换弹
     public void reload() {
         // 无后备子弹
-        if (current_WeaponAttr.backup == 0) {
+        if (current_WeaponAttr.backup == 0 ||current_WeaponAttr.currentBulletNum==current_WeaponAttr.bulletNum) {
             reloading = false;
             reloadTimes = 0;
             return;

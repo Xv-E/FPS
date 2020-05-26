@@ -14,6 +14,8 @@ namespace Com.MyCompany.MyGame
         [Tooltip("The UI Label to inform the user that the connection is in progress")]
         [SerializeField]
         private GameObject progressLabel;
+        public GameObject teamDropDown;
+        public GameObject characterDropDown;
         public GameObject playButton;
         public GameObject createButton;
         public GameObject joinButton;
@@ -21,6 +23,7 @@ namespace Com.MyCompany.MyGame
         public GameObject roomInputField;
         public GameObject gridLayout;
         public GameObject scrollView;
+        public GameObject map;
 
         [Tooltip("The maximum number of players per room. When a room is full, it can't be joined by new players, and so new room will be created")]
         [SerializeField] //可以显示在unity面板上
@@ -85,6 +88,8 @@ namespace Com.MyCompany.MyGame
         public void Connect()
         {
             isConnecting = true;
+            teamDropDown.SetActive(false);
+            characterDropDown.SetActive(false);
             nameInputField.SetActive(false);
             playButton.SetActive(false);
             progressLabel.SetActive(true);
@@ -92,6 +97,10 @@ namespace Com.MyCompany.MyGame
             joinButton.SetActive(true);
             roomInputField.SetActive(true);
             scrollView.SetActive(true);
+            map.SetActive(true);
+            //PlayerPrefs.SetString("name", nameInputField.GetComponent<Text>().text);
+            PlayerPrefs.SetInt("team", teamDropDown.GetComponent<Dropdown>().value);
+            PlayerPrefs.SetInt("character", characterDropDown.GetComponent<Dropdown>().value);
             // we check if we are connected or not, we join if we are , else we initiate the connection to the server.
             if (PhotonNetwork.IsConnected)
             {
@@ -137,6 +146,7 @@ namespace Com.MyCompany.MyGame
             // we check if we are connected or not, we join if we are , else we initiate the connection to the server.
             if (PhotonNetwork.IsConnected)
             {
+
                 // #Critical we need at this point to attempt joining a Random Room. If it fails, we'll get notified in OnJoinRandomFailed() and we'll create one.
                 PhotonNetwork.JoinRoom(roomInputField.GetComponent<InputField>().text);
                 
@@ -197,16 +207,18 @@ namespace Com.MyCompany.MyGame
         public override void OnJoinedRoom()
         {
             // #Critical: We only load if we are the first player, else we rely on `PhotonNetwork.AutomaticallySyncScene` to sync our instance scene.
-            if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
-            {
-                Debug.Log("We load the 'Room for 1' ");
+            //if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
+            //{
+            //    Debug.Log("We load the 'Room for 1' ");
 
 
-                // #Critical
-                // Load the Room Level.
-                PhotonNetwork.LoadLevel("Room for 1");
-            }
-            Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
+            //    // #Critical
+            //    // Load the Room Level.
+            //    PhotonNetwork.LoadLevel("Room for 1");
+            //}
+            //Debug.Log("PUN Basics Tutorial/Launcher: OnJoinedRoom() called by PUN. Now this client is in a room.");
+
+            PhotonNetwork.LoadLevel(map.GetComponent<Dropdown>().options[map.GetComponent<Dropdown>().value].text);
         }
 
         #endregion

@@ -28,6 +28,8 @@ public class WeaponAttr : MonoBehaviour, IPunObservable
             stream.SendNext(currentBulletNum);
             stream.SendNext(backup);
             stream.SendNext(reload_time);
+            //stream.SendNext(frontHandler.transform);
+            //stream.SendNext(frontHandler.transform);
         }
         else
         {
@@ -38,6 +40,11 @@ public class WeaponAttr : MonoBehaviour, IPunObservable
             currentBulletNum = (int)stream.ReceiveNext();
             backup = (int)stream.ReceiveNext();
             reload_time = (int)stream.ReceiveNext();
+            //Transform t = (Transform)stream.ReceiveNext();
+            //frontHandler.transform.SetPositionAndRotation(t.position, t.rotation);
+            //t = (Transform)stream.ReceiveNext();
+            //backHandler.transform.SetPositionAndRotation(t.position, t.rotation);
+
         }
     }
 

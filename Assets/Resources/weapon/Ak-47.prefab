@@ -113,13 +113,12 @@ MonoBehaviour:
   backHandler: {fileID: 3199971992768537976}
   weaponName: AK47
   damage: 15
-  bulletSpeed: 8
+  bulletSpeed: 40
   shootSpeed: 15
   bulletNum: 30
   currentBulletNum: 30
   backup: 60
   reload_time: 80
-  price: 200
 --- !u!114 &-7380509837940853038
 MonoBehaviour:
   m_ObjectHideFlags: 0

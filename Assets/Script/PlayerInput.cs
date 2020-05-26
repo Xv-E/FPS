@@ -8,6 +8,8 @@ using Photon.Pun;
 public class PlayerInput : MonoBehaviour, IPunObservable
 {
     public GameObject StoreCanvas;
+    public GameObject firstCamera;
+    public GameObject Scope;
     //intput key
     public string keyUp;
     public string keyDown;
@@ -22,7 +24,7 @@ public class PlayerInput : MonoBehaviour, IPunObservable
     public Vector2 velocity;  // 移动速度
     public bool jump = false; // 跳跃
     public bool fire = false; // 开火
-
+    public bool boom = false; // 手雷
     //切换镜头
     public bool changeCamera = false;
     // 切换武器
@@ -52,18 +54,20 @@ public class PlayerInput : MonoBehaviour, IPunObservable
     void Start()
     {
         StoreCanvas.SetActive(false);
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown("o")){
-            Screen.fullScreen = !Screen.fullScreen;
-        }
-
+        
         // 不是本地用户角色
         if (this.gameObject != PlayerManager.localPlayer) return;
-
+        
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            Screen.fullScreen = !Screen.fullScreen;
+        }
         // 鼠标事件 当鼠标在ui界面时失效
         if (!EventSystem.current.IsPointerOverGameObject())
         {
@@ -85,9 +89,10 @@ public class PlayerInput : MonoBehaviour, IPunObservable
         // 切换武器
         changeLeft = Input.GetKeyDown("q");
         changeRight = Input.GetKeyDown("e");
-        //换弹
+        // 换弹
         reload = Input.GetKeyDown("r");
-
+        // 手雷
+        boom = Input.GetKeyDown("g");
         // 移动跳跃指令
         if (moveInputEnable) { 
             targetDup = (Input.GetKey(keyUp) ? 1.0f : 0) - (Input.GetKey(keyDown) ? 1.0f : 0);
@@ -108,6 +113,18 @@ public class PlayerInput : MonoBehaviour, IPunObservable
         {
             StoreCanvas.SetActive(true);
             Cursor.visible = true;
+        }
+        //右键放大
+        if (Input.GetMouseButtonDown(1))
+        {
+            Debug.Log("right");
+            Scope.gameObject.SetActive(true);
+            //firstCamera.GetComponent<Camera>().fieldOfView /= 2;
+        }
+        if (Input.GetMouseButtonUp(1))
+        {
+            Scope.gameObject.SetActive(false);
+            //firstCamera.GetComponent<Camera>().fieldOfView *= 2;
         }
 
     }
@@ -139,5 +156,10 @@ public class PlayerInput : MonoBehaviour, IPunObservable
             changeRight = (bool)stream.ReceiveNext();
             reload = (bool)stream.ReceiveNext();
         }
+    }
+    public void LeaveRoom()
+    {
+        PhotonNetwork.LeaveRoom();
+        PhotonNetwork.LeaveLobby();
     }
 }

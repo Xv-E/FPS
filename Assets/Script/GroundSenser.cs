@@ -7,6 +7,7 @@ public class GroundSenser : MonoBehaviour
     public CapsuleCollider capcol;
     public float senser_option=0.05f;
     public bool isGrounded;
+    public bool isTimeTrans = false;
     private Vector3 point1;
     private Vector3 point2;
     private float radius;
@@ -23,7 +24,7 @@ public class GroundSenser : MonoBehaviour
         point2 = transform.position - transform.up * radius + transform.up * capcol.height;
 
         Collider[] outputCols = Physics.OverlapCapsule(point1, point2, radius, LayerMask.GetMask("Character")|LayerMask.GetMask("Ground"));
-        if (outputCols.Length > 1)
+        if (outputCols.Length > 1 && !isTimeTrans)
         {
             isGrounded = true;
         }

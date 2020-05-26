@@ -18,7 +18,9 @@ namespace Com.MyCompany.MyGame
         #region Public Fields
         public static GameManager Instance;
         [Tooltip("The prefab to use for representing the player")]
-        public GameObject playerPrefab;
+        public GameObject[] playerPrefab;
+        public Transform red_Home;
+        public Transform blue_Home;
         #endregion
 
         #region Photon Callbacks
@@ -79,7 +81,17 @@ namespace Com.MyCompany.MyGame
                 {
                     Debug.LogFormat("We are Instantiating LocalPlayer from {0}", SceneManagerHelper.ActiveSceneName);
                     // we're in a room. spawn a character for the local player. it gets synced by using PhotonNetwork.Instantiate
-                    PhotonNetwork.Instantiate(this.playerPrefab.name, new Vector3(0f, 5f, 0f), Quaternion.identity, 0);
+                    int teamCode = PlayerPrefs.GetInt("team");
+                    int characterCode = PlayerPrefs.GetInt("character");
+                    //PlayerPrefs.DeleteKey("team");
+                    Transform home;
+                    object[] data = {teamCode};
+                    // 设置出生点
+                    if (teamCode == 0)
+                        home = blue_Home;
+                    else
+                        home = red_Home;
+                    PhotonNetwork.Instantiate(this.playerPrefab[characterCode].name, home.position, home.rotation, 0, data);
                 }
                 else
                 {
@@ -88,6 +100,7 @@ namespace Com.MyCompany.MyGame
             }
         }
 
+        
         #endregion
 
 
@@ -96,6 +109,8 @@ namespace Com.MyCompany.MyGame
 
         public void LeaveRoom()
         {
+            if(PlayerManager.localPlayer!=null)
+                PhotonNetwork.Destroy(PlayerManager.localPlayer);
             PhotonNetwork.LeaveRoom();
             PhotonNetwork.LeaveLobby();
         }

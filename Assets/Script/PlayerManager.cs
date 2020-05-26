@@ -9,6 +9,7 @@ public class PlayerManager : MonoBehaviour
     static public GameObject localPlayer;
 
     public GameObject model; // 模型
+    //public GameObject model_Surface;
     public GameObject step_rotation;
     public GameObject aim;
 
@@ -35,7 +36,6 @@ public class PlayerManager : MonoBehaviour
     }
     void Start()
     {
-
     }
 
     // Update is called once per frame
