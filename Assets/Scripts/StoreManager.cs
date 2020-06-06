@@ -87,7 +87,7 @@ public class StoreManager : MonoBehaviourPunCallbacks, IPunObservable
     }
     public void Back()
     {
-        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         this.gameObject.SetActive(false);
     }
 

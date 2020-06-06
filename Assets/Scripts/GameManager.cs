@@ -24,8 +24,6 @@ namespace Com.MyCompany.MyGame
         #endregion
 
         #region Photon Callbacks
-
-
         /// <summary>
         /// Called when the local player left the room. We need to load the launcher scene.
         /// </summary>

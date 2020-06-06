@@ -71,6 +71,7 @@ namespace Com.MyCompany.MyGame
             //roomInputField.SetActive(false);
             //progressLabel.SetActive(false);
             //scrollView.SetActive(false);
+            Cursor.lockState = CursorLockMode.None;
         }
 
 

@@ -84,7 +84,7 @@ public class BulletManager : MonoBehaviourPunCallbacks, IPunObservable
                 {
                     if(other.GetComponent<PhotonView>().IsMine)
                     {
-                        Cursor.visible = true;
+                        Cursor.lockState = CursorLockMode.None;
                         //Debug.Log("create leave button");
                         GameObject leaveButton = Instantiate(Resources.Load("Particle/LeaveCanvas") as GameObject, this.transform.position, this.transform.rotation);
                     }

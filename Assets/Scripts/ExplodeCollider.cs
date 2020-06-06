@@ -26,6 +26,7 @@ public class ExplodeCollider : MonoBehaviour
                 if (other.GetComponent<PhotonView>().IsMine)
                 {
                     Debug.Log("create leave button from expolde collider");
+                    Cursor.lockState = CursorLockMode.None;
                     GameObject leaveButton = Instantiate(Resources.Load("Particle/LeaveCanvas") as GameObject, this.transform.position, this.transform.rotation); 
                 }
                 Destroy(other.gameObject);

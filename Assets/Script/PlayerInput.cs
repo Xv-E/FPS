@@ -45,7 +45,7 @@ public class PlayerInput : MonoBehaviour, IPunObservable
 
     void Awake()
     {
-        Cursor.visible = false;     // 隐藏鼠标
+        Cursor.lockState = CursorLockMode.Locked;     // 隐藏鼠标
         Screen.fullScreen = false;  // 退出全屏           
         Screen.SetResolution(1200, 800, false);
         if (GetComponent<PhotonView>().IsMine) localPlayer = this.gameObject;
@@ -112,7 +112,7 @@ public class PlayerInput : MonoBehaviour, IPunObservable
         if (Input.GetKeyDown(KeyCode.P))
         {
             StoreCanvas.SetActive(true);
-            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
         //右键放大
         if (Input.GetMouseButtonDown(1))

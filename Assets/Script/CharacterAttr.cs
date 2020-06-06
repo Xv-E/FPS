@@ -10,7 +10,7 @@ public class CharacterAttr : MonoBehaviour, IPunObservable,IPunInstantiateMagicC
 
     // 属性
     public float health = 100f;
-    public float moveSpeed = 200f;
+    public float moveSpeed = 500f;
     public float jumpHeight = 5f;
     public int money = 500;
 
@@ -28,6 +28,7 @@ public class CharacterAttr : MonoBehaviour, IPunObservable,IPunInstantiateMagicC
         if (health <= 0)
         {
             Destroy(this.gameObject);
+            Cursor.lockState = CursorLockMode.None;
         }
     }
 
